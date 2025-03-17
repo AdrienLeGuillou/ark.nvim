@@ -1,5 +1,6 @@
 local M = {}
 
+-- this does not work for visual lines
 local function get_visual_selection()
   local mode = vim.fn.mode()
   if mode == "n" then
@@ -10,11 +11,13 @@ local function get_visual_selection()
 end
 
 M.current_line = function()
-    return vim.fn.getline(".")
+  return vim.fn.getline(".")
 end
 
+-- must be called with `:<c-u> ...<cr>`
+-- otherwise `'< and `'>` are not set
 M.selection = function()
-  return table.concat(get_visual_selection(), '\n')
+  return  vim.fn.getregion(vim.fn.getpos("'<"), vim.fn.getpos("'>"))
 end
 
 
