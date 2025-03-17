@@ -201,6 +201,40 @@ M.execute_current = function()
     M.execute_lines(lines)
 end
 
+M.send_line = function()
+    local get = require("ark.get_code")
+    local lines = {
+      get.current_line(),
+      ""
+    }
+    M.execute_lines(lines)
+end
+
+-- M.send_visual = function()
+--     local get = require("ark.get_code")
+--     local lines = {
+--       get.selection(),
+--       ""
+--     }
+--     M.execute_lines(lines)
+-- end
+
+M.send_visual = function()
+  local s_start = vim.fn.getpos("'<")
+  local s_end = vim.fn.getpos("'>")
+  print(s_start[1])
+  local n_lines = math.abs(s_end[2] - s_start[2]) + 1
+  local lines = vim.api.nvim_buf_get_lines(0, s_start[2] - 1, s_end[2], false)
+  lines[1] = string.sub(lines[1], s_start[3], -1)
+  if n_lines == 1 then
+    lines[n_lines] = string.sub(lines[n_lines], 1, s_end[3] - s_start[3] + 1)
+  else
+    lines[n_lines] = string.sub(lines[n_lines], 1, s_end[3])
+  end
+  table.insert(lines, "")
+  M.execute_lines(lines)
+end
+
 function M.setup(cfg)
     config = vim.tbl_extend("force", config, cfg)
     vim.validate({
